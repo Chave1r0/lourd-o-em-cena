@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Lourdão em Cena</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      padding: 0px;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    /* Faixa preta atrás da logo */
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+      background-color: black; /* faixa preta */
+      padding: 0px 0;
+    }
+
+    img.logo {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      max-width: 300px;
+      height: auto;
+    }
+
+    /* Sidebar fixa à esquerda do card */
+    .sidebar {
+      position: absolute;
+      top: 200px;
+      left: 30%;
+      transform: translateX(-220px);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      min-width: 200px;
+    }
+
+    .topic {
+      padding: 10px 15px;
+      border-radius: 5px;
+      color: #fff;
+    }
+
+    .topic h3 {
+      margin: 0 0 5px 0;
+      font-size: 16px;
+    }
+
+    .topic p {
+      margin: 0;
+      font-size: 12px;
+    }
+
+    .blue { background-color: #3498db; }      
+    .orange { background-color: #e67e22; }    
+    .yellow { background-color: #f1c40f; color: #000; }    
+    .pink { background-color: #e91e63; }      
+    .green { background-color: #2ecc71; }     
+
+    /* Card centralizado com a logo */
+    .card-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      width: 350px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      max-height: 300px;
+      object-fit: cover;
+    }
+
+    .card h2 {
+      font-size: 20px;
+      margin: 10px 0;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #444;
+    }
+
+    .card button {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #3498db;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .card button:hover {
+      background-color: #2980b9;
+    }
+
+    /* Responsivo */
+    @media(max-width: 800px){
+      .sidebar {
+        position: static;
+        transform: none;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        min-width: unset;
+      }
+      .topic {
+        flex: 1 1 40%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrixCanvas"></canvas>
+  <!-- Logo -->
+  <div class="logo-container">
+    <img src="logo.png" alt="Lourdão em Cena" class="logo">
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="topic blue">
+      <h3>Welcome</h3>
+      <p>Saiba das novidades do nosso colégio.</p>
+    </div>
+    <div class="topic orange">
+      <h3>Gossip</h3>
+      <p>Curiosidades e fofocas da escola.</p>
+    </div>
+    <div class="topic yellow">
+      <h3>Pics</h3>
+      <p>Fotos e momentos especiais dos alunos.</p>
+    </div>
+    <div class="topic pink">
+      <h3>Parties</h3>
+      <p>Eventos e festas que acontecem no colégio.</p>
+    </div>
+    <div class="topic green">
+      <h3>Links</h3>
+      <p>Links úteis e recursos para os estudantes.</p>
+    </div>
+  </div>
+
+  <!-- Card centralizado -->
+  <div class="card-container">
+    <div class="card">
+      <h2 id="postTitle">3B em cena</h2>
+      <img id="mainPhoto" src="foto1.jpg" alt="Foto exemplo">
+      <p id="postDesc">Aqui estão os estudantes do 3B.</p>
+      <button onclick="changePhoto()">Próxima Foto</button>
+    </div>
+  </div>
+
+  <script>
+    // Lista de posts com foto, título e descrição
+    const posts = [
+      {
+        photo: "foto1.jpg",
+        title: "3B em cena",
+        desc: "Aqui estão os estudantes do 3B."
+      },
+      {
+        photo: "foto2.jpg",
+        title: "Apresentação de Teatro",
+        desc: "O grupo se apresentou no auditório com muito talento."
+      },
+      {
+        photo: "foto3.jpg",
+        title: "Confraternização",
+        desc: "Momentos especiais do encontro de final de ano."
+      }
+    ];
+
+    let photoIndex = 0;
+
+    function changePhoto() {
+      photoIndex = (photoIndex + 1) % posts.length;
+
+      document.getElementById("mainPhoto").src = posts[photoIndex].photo;
+      document.getElementById("postTitle").innerText = posts[photoIndex].title;
+      document.getElementById("postDesc").innerText = posts[photoIndex].desc;
+    }
+
+    // Matrix background
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.zIndex = '-1';
+    canvas.style.backgroundColor = 'black';
+
+    const katakana = '█';
+    const latin = '█';
+    const nums = '█';
+    const alphabet = katakana + latin + nums;
+
+    const fontSize = 16;
+    const columns = Math.floor(canvas.width / fontSize);
+    const rainDrops = [];
+
+    for (let x = 0; x < columns; x++) {
+        rainDrops[x] = Math.floor(Math.random() * canvas.height / fontSize);
+    }
+
+    function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = 'rgb(212, 212, 102)';
+        ctx.font = fontSize + 'px monospace';
+
+        for (let i = 0; i < rainDrops.length; i++) {
+            const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+            ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+            let speed = 0.2;
+            rainDrops[i] -= speed;
+
+            if (rainDrops[i] * fontSize < 0 && Math.random() > 0.975) {
+                rainDrops[i] = canvas.height / fontSize;
+            }
+        }
+    }
+
+    function animate() {
+        draw();
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
